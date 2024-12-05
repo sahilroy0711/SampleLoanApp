@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class LoanStatusUpdateRequest {
     private Long loanId;
-    private Integer status;
+    private String status;
 }

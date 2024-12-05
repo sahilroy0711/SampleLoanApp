@@ -5,47 +5,44 @@ import com.sample.datalayer.request.LoanStatusUpdateRequest;
 import com.sample.datalayer.response.FetchLoanApiResponse;
 import com.sample.datalayer.response.LoanCreationResponse;
 import com.sample.model.LoanMasterData;
-import com.sample.repository.LoanCreationRepository;
+import com.sample.repository.LoanManagerRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.Map;
 
 @Service
 @Slf4j
 public class LoanManagementService {
     @Autowired
-    LoanCreationRepository loanCreationRepository;
+    LoanManagerRepository loanManagerRepository;
 
     public LoanCreationResponse createLoanService(LoanCreationRequest loanCreationRequest) {
-        Long loanId = loanCreationRequest.getLoanId();
-
-        LoanMasterData loanMasterData = new LoanMasterData();
-        loanMasterData.setLoanId(loanId);
-
+        LoanMasterData loanMasterData = createLoanMasterData(loanCreationRequest);
         LoanCreationResponse loanCreationResponse = new LoanCreationResponse();
         try {
-            loanCreationRepository.save(loanMasterData);
+            loanManagerRepository.save(loanMasterData);
             loanCreationResponse.setStatus("SUCCESS");
             loanCreationResponse.setMessage("Loan created successfully in database");
+            log.info("[LoanManagementService.createLoanService] :: Loan created successfully for request {} ",loanCreationRequest);
         }catch (Exception e){
-            log.info("Error while creating loan in DB");
+            log.info("[LoanManagementService.createLoanService] :: Error while creating loan in DB error : ",e);
             loanCreationResponse.setStatus("FAILURE");
             loanCreationResponse.setMessage("Loan creation unsuccessful");
         }
 
         return loanCreationResponse;
-
     }
 
     public void updateLoanStatus(LoanStatusUpdateRequest loanStatusUpdateRequest){
-        Integer status = loanStatusUpdateRequest.getStatus();
+        String status = loanStatusUpdateRequest.getStatus();
         Long loanId = loanStatusUpdateRequest.getLoanId();
         LoanMasterData loanMasterData = null;
 
         try {
-            loanMasterData = loanCreationRepository.findByLoanId(loanId);
+            loanMasterData = loanManagerRepository.findByLoanId(loanId);
         }catch (Exception e){
             log.error("[LoanManagementService.updateLoanStatus] :: Error while fetching data from Database");
         }
@@ -54,7 +51,7 @@ public class LoanManagementService {
             log.error("[LoanManagementService.updateLoanStatus] :: No data available for the given loan id.");
         }else{
             loanMasterData.setLoanStatus(status);
-            loanCreationRepository.save(loanMasterData);
+            loanManagerRepository.save(loanMasterData);
             log.info("[LoanManagementService.updateLoanStatus] :: Loan status successfully updated");
         }
     }
@@ -71,7 +68,7 @@ public class LoanManagementService {
         LoanMasterData loanMasterData = null;
 
         try {
-            loanMasterData = loanCreationRepository.findByLoanId(loanId);
+            loanMasterData = loanManagerRepository.findByLoanId(loanId);
         }catch (Exception e){
             log.info("[LoanManagementService.fetchLoanData] :: Error while fetching data from Database: ",e);
         }
@@ -92,5 +89,22 @@ public class LoanManagementService {
         fetchLoanApiResponse.setRequestedAmount(loanMasterData.getRequestedAmount());
 
         return fetchLoanApiResponse;
+    }
+
+    private LoanMasterData createLoanMasterData(LoanCreationRequest loanCreationRequest){
+        log.info("creating loan data {}",loanCreationRequest);
+        LoanMasterData loanMasterData = new LoanMasterData();
+        loanMasterData.setLoanId(loanCreationRequest.getLoanId());
+        loanMasterData.setLoanStatus(loanCreationRequest.getLoanStatus());
+        loanMasterData.setName(loanCreationRequest.getName());
+        loanMasterData.setAge(loanCreationRequest.getAge());
+        loanMasterData.setPanNumber(loanCreationRequest.getPanNumber());
+        loanMasterData.setDueDate(loanCreationRequest.getDueDate());
+        loanMasterData.setRequestedAmount(loanCreationRequest.getRequestedAmount());
+        loanMasterData.setRateOfInterest(loanCreationRequest.getRateOfInterest());
+        loanMasterData.setCreatedAt(loanCreationRequest.getCreatedAt());
+        loanMasterData.setUpdatedAt(new Date());
+        log.info("loanMasterData {}",loanMasterData);
+        return loanMasterData;
     }
 }

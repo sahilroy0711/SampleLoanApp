@@ -1,9 +1,8 @@
 package com.sample.cron;
 
 import com.sample.model.LoanMasterData;
-import com.sample.repository.LoanCreationRepository;
+import com.sample.repository.LoanManagerRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -16,24 +15,26 @@ import java.util.List;
 @Slf4j
 public class LoanStatusUpdateCron {
     @Autowired
-    LoanCreationRepository loanCreationRepository;
+    LoanManagerRepository loanManagerRepository;
 
-    @Scheduled(cron = "00 00 00 * * *")
+    @Scheduled(cron = "0 0 0 * * ?")
     public void runCronJob(){
         Date currentDate = new Date();
-        Date expiryThreshold = DateUtils.addMonths(currentDate,6);
-
         List<LoanMasterData> loanMasterDataList = new ArrayList<>();
 
         try{
-//            loanMasterDataList = loanCreationRepository.findByDueDate();
+            loanMasterDataList = loanManagerRepository.findByDueDateBefore(currentDate);
         }catch (Exception e){
             log.error("[LoanStatusUpdateCron.runCronJob] :: error while fetching data from DB");
         }
 
         for(LoanMasterData loanMasterData : loanMasterDataList){
-//            loanMasterData.setLoanStatus();
-            loanCreationRepository.save(loanMasterData);
+            long daysOverDue = currentDate.getTime()-loanMasterData.getDueDate().getTime()/24*60*60*1000;
+            if(daysOverDue>0) {
+                loanMasterData.setLoanStatus("OVERDUE");
+                loanMasterData.setDaysPastDue(daysOverDue);
+            }
+            loanManagerRepository.save(loanMasterData);
         }
     }
 }

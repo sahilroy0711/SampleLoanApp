@@ -15,7 +15,7 @@ public class FetchLoanApiResponse {
     String panNumber;
     String rateOfInterest;
     Double disbursedAmount;
-    Integer status;
+    String status;
     Date dueDate;
     String errorMessage;
 }

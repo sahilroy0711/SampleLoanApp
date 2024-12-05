@@ -23,18 +23,20 @@ public class LoanManagementController {
 
     @PostMapping("/createLoan")
     public ResponseEntity<LoanCreationResponse> createUserLoan(@Valid @RequestBody LoanCreationRequest loanCreationRequest){
+        log.info("[LoanManagementController.createUserLoan] :: hitting api with request {}",loanCreationRequest);
        LoanCreationResponse loanCreationResponse = loanManagementService.createLoanService(loanCreationRequest);
-        return new ResponseEntity<>(loanCreationResponse,
+       return new ResponseEntity<>(loanCreationResponse,
                 HttpStatus.OK);
     }
 
     @PutMapping("/updateLoanStatus")
     public void updateLoanStatus(@RequestBody LoanStatusUpdateRequest loanStatusUpdateRequest){
+        log.info("[LoanManagementController.updateLoanStatus] :: hitting api");
         loanManagementService.updateLoanStatus(loanStatusUpdateRequest);
     }
     @GetMapping("/fetchLoanData")
     public ResponseEntity<FetchLoanApiResponse> fetchLoanData(@RequestParam Map<String,String> allRequestParams){
-
+        log.info("[LoanManagementController.fetchLoanData] :: hitting api with request paramas {}",allRequestParams);
         FetchLoanApiResponse fetchLoanApiResponse = loanManagementService.fetchLoanData(allRequestParams);
         return new ResponseEntity<>(fetchLoanApiResponse,HttpStatus.OK);
     }

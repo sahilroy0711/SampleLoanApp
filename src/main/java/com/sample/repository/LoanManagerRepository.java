@@ -5,15 +5,15 @@ import lombok.NonNull;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
-public interface LoanCreationRepository extends CrudRepository<LoanMasterData, Integer> {
+public interface LoanManagerRepository extends CrudRepository<LoanMasterData, Long> {
 
     @NonNull
     LoanMasterData findByLoanId(Long loanId);
 
     @NonNull
-    List<LoanMasterData> findByDueDate(Long dueDate);
+    List<LoanMasterData> findByDueDateBefore(Date currentDate);
 }
