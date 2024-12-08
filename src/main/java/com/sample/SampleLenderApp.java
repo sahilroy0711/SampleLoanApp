@@ -15,10 +15,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @ComponentScan(basePackages = {"com.sample.*"})
 @EnableJpaRepositories(basePackages = "com.sample.repository")
 @EntityScan(basePackages = "com.sample.model")
-@Slf4j// Ensure the entity package is included
+@Slf4j
 public class SampleLenderApp {
     public static void main(String[] args) {
         SpringApplication.run(SampleLenderApp.class, args);
-        log.info("Application has started -------- 453");
+        log.info("Application has started ------- ");
     }
 }
