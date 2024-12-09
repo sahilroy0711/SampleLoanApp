@@ -28,9 +28,10 @@ public class LoanCreationConsumer {
 
     @KafkaListener(topics = "#{LoanCreationKafkaPropertiesConfig.getTopicName()}",
                    groupId = "#{LoanCreationKafkaPropertiesConfig.getConsumerGroup()}",
-                   containerFactory = "LoanCreationKafkaConsumerContainerFactory"
+                   containerFactory = "kafkaListenerContainerFactory"
     )
     public void listen(@Payload List<String> messages, Acknowledgment acknowledgment){
+        log.info("message {}",messages);
         for (String message : messages){
             try{
                 LoanCreationRequest loanCreationRequest = null;

@@ -22,6 +22,7 @@ public class KafkaConfig {
     @Autowired
     public KafkaConfig(@NonNull LoanCreationKafkaPropertiesConfig loanCreationKafkaPropertiesConfig){
         this.loanCreationKafkaPropertiesConfig=loanCreationKafkaPropertiesConfig;
+        System.out.println("LoanCreationKafkaPropertiesConfig initialized: " + loanCreationKafkaPropertiesConfig);
     }
     @Bean
     public Map<String,Object> LoanCreationConsumerConfigs(){
@@ -42,7 +43,7 @@ public class KafkaConfig {
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, String>  LoanCreationKafkaConsumerContainerFactory(){
+    public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory(){
         ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(LoanCreationConsumerFactory());
         factory.setBatchListener(true);
